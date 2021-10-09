@@ -6,7 +6,7 @@
 #    By: aulopez <aulopez@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2021/10/04 16:06:26 by aulopez          ###   ########.fr        #
+#    Updated: 2021/10/04 21:28:31 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ PATH_HDR=./inc/
 CC_O=$(COMPILER) $(FLAGS) -c -I$(PATH_HDR)
 CC_C=$(COMPILER) $(FLAGS) $(OBJ)
 
-SRC=main load_argv
+SRC=main load_argv elf_header
 OBJ=$(SRC:%=$(PATH_OBJ)%.o)
 DEP=$(OBJ:%.o=%.d)
 
