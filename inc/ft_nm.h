@@ -27,7 +27,4 @@
 
 int load_argv(const char *filename, void **ptr, size_t *len);
 int unload_argv(void *ptr, size_t len);
-
-int elf_class(const void *ptr, size_t len);
-int elf64_read(const void *ptr, size_t len);
 #endif

@@ -36,6 +36,8 @@ int load_argv(const char *filename, void **ptr, size_t *len)
 
 	if (fd >= 0 && close(fd) < 0)
 		write(STDERR_FILENO, "close failure\n", 14);
+	if (ret == -1)
+		*ptr = NULL;
 	return (ret);
 }
 
