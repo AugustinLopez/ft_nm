@@ -21,7 +21,7 @@ PATH_HDR=./inc/
 CC_O=$(COMPILER) $(FLAGS) -c -I$(PATH_HDR)
 CC_C=$(COMPILER) $(FLAGS) $(OBJ)
 
-SRC=main load_argv
+SRC=main load_argv elf64_main
 OBJ=$(SRC:%=$(PATH_OBJ)%.o)
 DEP=$(OBJ:%.o=%.d)
 

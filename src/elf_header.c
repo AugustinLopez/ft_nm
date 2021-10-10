@@ -51,7 +51,6 @@ char elf64_SymType(Elf64_Sym *sym, Elf64_Shdr *section) {
 	Elf64_Word stype;
 	char c = '?';
 
-	printf("%s\n", sym->st_name);
 	if (info == STB_GNU_UNIQUE)
 		c = 'u';
 	else if (info == STB_WEAK && type == STT_OBJECT)

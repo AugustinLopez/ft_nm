@@ -14,22 +14,21 @@
 #include <elf.h>
 #include <unistd.h>
 
-#include <stdio.h>
+uint64_t my_endian(const void *number, size_t size, int endian)
+{
+	uint64_t tmp = 0;
+	const uint8_t *ptr = number;
 
-int initial_elf64_check(const void *ptr, size_t len, int endian) {
-	const Elf64_Ehdr *head = ptr;
-
-	printf("Elf64 with %s endian\n", endian == ELFDATA2LSB ? "little":"big");
-	if (len < sizeof(*head)) {
-		write(STDERR_FILENO, "file is too short\n", 18);
-		return (-1);
-	}
-	printf("|%08lx|\n", head->e_shoff);
-	printf("|%2x|\n", ((uint8_t *)(&(head->e_shoff)))[0]);	
-	return (0);
+	if (endian == ELFDATA2LSB)
+		for (size_t i = size; i > 0; i--)
+			tmp = ptr[i - 1] + tmp * 0x100;
+	else
+		for (size_t i = 0; i < size; i++)
+			tmp = ptr[i] + tmp * 0x100;
+	return (tmp);
 }
 
-int find_elf_from_head(const void *ptr, size_t len, int *endian)
+int elf_from_head(const void *ptr, size_t len, int *endian)
 {
 	const Elf32_Ehdr *head = ptr;
 	int class;
@@ -38,23 +37,22 @@ int find_elf_from_head(const void *ptr, size_t len, int *endian)
 		write(STDERR_FILENO, "file is too short\n", 18);
 		return (-1);
 	}
-	//read magic byte
 	for (int i = 0; i < SELFMAG; i++) {
 		if (head->e_ident[i] != ELFMAG[i]) {
 			write(STDERR_FILENO, "bad magic byte\n", 15);
 			return (-1);
 		}
 	}
-		class = (int)head->e_ident[EI_CLASS];
-	if (class != ELFCLASS32 && class != ELFCLASS64){
-			write(STDERR_FILENO, "unsupported elf format\n", 23);
-			return (-1);
-	}
 	if (head->e_ident[EI_DATA] != ELFDATA2LSB && head->e_ident[EI_DATA] != ELFDATA2MSB) {
 			write(STDERR_FILENO, "unsupported endianness\n", 23);
 			return (-1);
 	}
 	*endian = head->e_ident[EI_DATA];
+	class = (int)head->e_ident[EI_CLASS];
+	if (class != ELFCLASS64 && class != ELFCLASS32) {
+		write(STDERR_FILENO, "unsupported architecture\n", 26);
+		return (-1);
+	}
 	return (class);
 }
 
@@ -69,9 +67,9 @@ int main(int ac, char **av)
 	//No argument provided: try reading a.out
 	if (ac == 1) {
 		if ((ret = load_argv("a.out", &ptr, &len)) != -1) {
-			ret = find_elf_from_head(ptr, len, &endian);
+			ret = elf_from_head(ptr, len, &endian);
 			if (ret != -1)
-				initial_elf64_check(ptr, len, endian);
+				ret = elf64_main(ptr, len, endian);
 				//printf("Elf%d with %s endian\n", 32 * ret, endian == ELFDATA2LSB ? "little":"big");
 		}
 		unload_argv(ptr, len);
@@ -81,9 +79,9 @@ int main(int ac, char **av)
 	//argument provided: read all of them
 	for (int i = 1; i < ac; i++) {
 		if ((ret = load_argv(av[i], &ptr, &len)) != -1) {
-			ret = find_elf_from_head(ptr, len, &endian);
+			ret = elf_from_head(ptr, len, &endian);
 			if (ret != -1)
-				initial_elf64_check(ptr, len, endian);
+				ret = elf64_main(ptr, len, endian);
 				//printf("Elf%d with %s endian\n", 32 * ret, endian == ELFDATA2LSB ? "little":"big");
 		}
 		if (mem == 0)
