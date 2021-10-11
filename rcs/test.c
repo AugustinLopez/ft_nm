@@ -22,5 +22,9 @@ inline int Letter_U2()
 
 int Letter_T()
 {
+    const char aaa;
+    static const char rrr;
+    static char bbb;
+    static char ddd = 'a';
     return (Letter_t()+Letter_U2()+Letter_U3());
 }

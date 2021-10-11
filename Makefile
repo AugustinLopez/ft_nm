@@ -21,7 +21,9 @@ PATH_HDR=./inc/
 CC_O=$(COMPILER) $(FLAGS) -c -I$(PATH_HDR)
 CC_C=$(COMPILER) $(FLAGS) $(OBJ)
 
-SRC=main load_argv elf64_main
+MAIN=main load_argv elf_identifier my_endian my_print_handler
+ELF64=main_elf64 head_elf64 sections_elf64 symbols_elf64
+SRC=$(MAIN) $(ELF64)
 OBJ=$(SRC:%=$(PATH_OBJ)%.o)
 DEP=$(OBJ:%.o=%.d)
 
