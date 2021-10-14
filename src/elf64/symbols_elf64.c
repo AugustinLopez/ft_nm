@@ -23,12 +23,12 @@ static unsigned char elf64_letter_from_section_info(const Elf64_Shdr *section)
 		c = 'T';
 	else if (section->sh_type == SHT_NOBITS)
 		c = (section->sh_flags & SHF_IA_64_SHORT) ? 'S' : 'B';
+	else if ((section->sh_flags & (SHF_ALLOC | SHF_EXECINSTR | SHF_WRITE)) == SHF_ALLOC)
+		c = 'R';
 	else if (section->sh_type == SHT_IA_64_UNWIND)
 		c = 'p';
 	else if ((section->sh_flags & (SHF_ALLOC | SHF_EXECINSTR | SHF_WRITE)) == (SHF_ALLOC | SHF_WRITE))
 		c = (section->sh_flags & SHF_IA_64_SHORT) ? 'G' : 'D';
-	else if ((section->sh_flags & (SHF_ALLOC | SHF_EXECINSTR | SHF_WRITE)) == SHF_ALLOC)
-		c = 'R';
 	else if (section->sh_flags == 0)
 		c = 'N';
 	return (c);
