@@ -126,6 +126,7 @@ void handle_print(t_nmhandle *handler, char *filename)
     t_nmlist *elem = handler->begin;
     t_nmlist **sorted;
     size_t i = 0;
+    int j;
 
     if (filename)
         printf("\n%s:\n", filename);
@@ -138,13 +139,14 @@ void handle_print(t_nmhandle *handler, char *filename)
         elem = elem->next;
     }
     ft_qsort(sorted, 0, handler->current_count - 1);
+    j = 8 + 8 * (handler->class == 64);
     for (i = 0; i < handler->current_count; i++) {
         if (sorted[i]->addr != 0 && ft_strchr("Uw", sorted[i]->letter) == NULL)
-			printf("%016lx %c %s\n", sorted[i]->addr, sorted[i]->letter, sorted[i]->name);
+			printf("%0*lx %c %s\n", j, sorted[i]->addr, sorted[i]->letter, sorted[i]->name);
 		else if (ft_strchr("Uw", sorted[i]->letter) == NULL)
-			printf("0000000000000000 %c %s\n", sorted[i]->letter, sorted[i]->name);
+			printf("%0*d %c %s\n", j, 0, sorted[i]->letter, sorted[i]->name);
 		else
-			printf("                 %c %s\n", sorted[i]->letter, sorted[i]->name);
+			printf("%*s %c %s\n", j, " ", sorted[i]->letter, sorted[i]->name);
     }
     free(sorted);
 }

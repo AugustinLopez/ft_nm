@@ -1,8 +1,8 @@
 #include "ft_mylib.h"
-#include "ft_elf64.h"
+#include "ft_elf32.h"
 #include <unistd.h>
 
-static unsigned char elf64_letter_from_section_name(const char *name)
+static unsigned char elf32_letter_from_section_name(const char *name)
 {
 	unsigned char c = '?';
 
@@ -15,7 +15,7 @@ static unsigned char elf64_letter_from_section_name(const char *name)
 	return (c);
 }
 
-static unsigned char elf64_letter_from_section_info(const Elf64_Shdr *section)
+static unsigned char elf32_letter_from_section_info(const Elf32_Shdr *section)
 {
 	unsigned char c = '?';
 
@@ -32,14 +32,14 @@ static unsigned char elf64_letter_from_section_info(const Elf64_Shdr *section)
 	return (c);
 }
 
-static unsigned char elf64_letter_from_symbol(const Elf64_Sym *sym)
+static unsigned char elf32_letter_from_symbol(const Elf32_Sym *sym)
 {
 	unsigned char c = '?';
 
-	if (ELF64_ST_BIND(sym->st_info) == STB_GNU_UNIQUE)
+	if (ELF32_ST_BIND(sym->st_info) == STB_GNU_UNIQUE)
 		c = 'u';
-	else if (ELF64_ST_BIND(sym->st_info) == STB_WEAK) {
-		if (ELF64_ST_TYPE(sym->st_info) == STT_OBJECT)
+	else if (ELF32_ST_BIND(sym->st_info) == STB_WEAK) {
+		if (ELF32_ST_TYPE(sym->st_info) == STT_OBJECT)
 			c = (sym->st_shndx == SHN_UNDEF) ? 'v' : 'V';
 		else
 			c = (sym->st_shndx == SHN_UNDEF) ? 'w' : 'W';
@@ -54,21 +54,21 @@ static unsigned char elf64_letter_from_symbol(const Elf64_Sym *sym)
 }
 
 
-int elf64_symbols(t_m64 *elf, const Elf64_Shdr *section, const Elf64_Sym *symtab, const char *symname, t_nmhandle *printer)
+int elf32_symbols(t_m32 *elf, const Elf32_Shdr *section, const Elf32_Sym *symtab, const char *symname, t_nmhandle *printer)
 {
 	const char *section_name = elf->string_ptr + section->sh_name;
 	unsigned char c;
 
 	for (unsigned int i = 1; i < section->sh_size / section->sh_entsize; i++) {
-		if (ELF64_ST_TYPE(symtab[i].st_info) == STT_FILE
-		|| ELF64_ST_TYPE(symtab[i].st_info) == STT_SECTION)
+		if (ELF32_ST_TYPE(symtab[i].st_info) == STT_FILE
+		|| ELF32_ST_TYPE(symtab[i].st_info) == STT_SECTION)
 			continue ;
-		c = elf64_letter_from_symbol(&symtab[i]);
-		c = (c != '?') ? c : elf64_letter_from_section_name(section_name);
-		c = (c != '?') ? c : elf64_letter_from_section_info(&(elf->section[symtab[i].st_shndx])); 
+		c = elf32_letter_from_symbol(&symtab[i]);
+		c = (c != '?') ? c : elf32_letter_from_section_name(section_name);
+		c = (c != '?') ? c : elf32_letter_from_section_info(&(elf->section[symtab[i].st_shndx])); 
 		if (c == '?')
 			continue ;
-		if (ft_strchr("?uvw", c) == NULL && ELF64_ST_BIND(symtab[i].st_info) == STB_LOCAL)
+		if (ft_strchr("?uvw", c) == NULL && ELF32_ST_BIND(symtab[i].st_info) == STB_LOCAL)
 			c += 'a' - 'A';
 		if (handle_add_fof(printer, (uint64_t)symtab[i].st_value, c, symname + symtab[i].st_name) == -1)
 			return (-1);

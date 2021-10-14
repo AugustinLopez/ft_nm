@@ -12,9 +12,9 @@
 
 NAME=ft_nm
 COMPILER=gcc
-FLAGS=-g3 -fsanitize=address -Wall -Wextra -MMD -MP
+FLAGS=-g3 -O0 -fsanitize=address -Wall -Wextra -MMD -MP
 
-VPATH=src:src/elf64
+VPATH=src:src/elf64:src/elf32
 PATH_OBJ=.object/
 PATH_HDR=./inc/
 
@@ -23,7 +23,9 @@ CC_C=$(COMPILER) $(FLAGS) $(OBJ)
 
 MAIN=main load_argv elf_identifier my_endian my_print_handler
 ELF64=main_elf64 head_elf64 sections_elf64 symbols_elf64
-SRC=$(MAIN) $(ELF64)
+ELF32=main_elf32 head_elf32 sections_elf32 symbols_elf32
+
+SRC=$(MAIN) $(ELF64) $(ELF32)
 OBJ=$(SRC:%=$(PATH_OBJ)%.o)
 DEP=$(OBJ:%.o=%.d)
 
