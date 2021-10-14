@@ -27,7 +27,7 @@ struct section_to_type {
 
 //https://sourceware.org/git/?p=binutils-gdb.git;a=blob_plain;f=bfd/syms.c;hb=a288c270991de1578ad28ac312120f4167347234
 
-# define STT_COUNT 19
+# define STT_COUNT 22
 static const struct section_to_type stt[STT_COUNT] =
 {
   {".bss", 'B'},
@@ -37,9 +37,12 @@ static const struct section_to_type stt[STT_COUNT] =
   {".debug", 'N'},		/* MSVC's .debug (non-standard debug syms) */
   {".drectve", 'I'},		/* MSVC's .drective section */
   {".edata", 'E'},		/* MSVC's .edata (export) section */
-  {".fini", 'T'},		/* ELF fini section */
+  {".init_array", '?'},
+  {".fini_array", '?'},
+  {".eh_frame", 'B'},
+  {".fini", 'T'},		
+  {".init", 'T'},	
   {".idata", 'I'},		/* MSVC's .idata (import) section */
-  {".init", 'T'},		/* ELF init section */
   {".pdata", 'P'},		/* MSVC's .pdata (stack unwind) section */
   {".rdata", 'R'},		/* Read only data.  */
   {".rodata", 'R'},		/* Read only data.  */
