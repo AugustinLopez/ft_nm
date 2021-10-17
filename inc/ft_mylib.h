@@ -4,10 +4,15 @@
 # include <stdint.h>
 # include <stddef.h>
 
+# define FLAG_MULTIPLE_ARG 0x1
+# define FLAG_FATELF 0x2
+# define FLAG_ARCH 0x4
+
 # ifndef __42__
 	# include <string.h>
 	# define ft_memset memset
 	# define ft_memcmp memcmp
+    # define ft_memcpy memcpy
     # define ft_strcmp strcmp
 	# define ft_strchr strchr
 	# define ft_strlen strlen
@@ -17,15 +22,10 @@
 	int memcmp(const void *s1, const void *s2, size_t n);
 # endif
 
-#include <stdint.h>
-#include <stddef.h>
-
 struct section_to_type {
 	char *name;
 	char letter;
 };
-
-//https://sourceware.org/git/?p=binutils-gdb.git;a=blob_plain;f=bfd/syms.c;hb=a288c270991de1578ad28ac312120f4167347234
 
 # define STT_COUNT 21
 static const struct section_to_type stt[STT_COUNT] =
@@ -66,9 +66,12 @@ typedef struct s_nmhandle {
     t_nmlist *begin;
     t_nmlist *current;
     t_nmlist *end;
+    char *filename;
     size_t current_count;
     size_t total_count;
     uint64_t flag;
+    uint16_t architecture;
+    char *objectname;
     int class;
     int alive;
 } t_nmhandle;
@@ -77,7 +80,7 @@ int handle_constructor(t_nmhandle *handler);
 void handle_reset(t_nmhandle *handler);
 void handle_destructor(t_nmhandle *handler);
 int handle_add_fof(t_nmhandle *handler, uint64_t addr, char letter, const char *name);
-void handle_print(t_nmhandle *handler, char *filename);
+void handle_print(t_nmhandle *handler);
 
 uint64_t my_endian(const void *number, size_t size, int endian);
 # endif

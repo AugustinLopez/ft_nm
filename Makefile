@@ -14,7 +14,7 @@ NAME=ft_nm
 COMPILER=gcc
 FLAGS=-g3 -O0 -fsanitize=address -Wall -Wextra -MMD -MP
 
-VPATH=src:src/elf64:src/elf32
+VPATH=src:src/elf64:src/elf32:src/fatelf:src/ar
 PATH_OBJ=.object/
 PATH_HDR=./inc/
 
@@ -24,8 +24,10 @@ CC_C=$(COMPILER) $(FLAGS) $(OBJ)
 MAIN=main load_argv elf_identifier my_endian my_print_handler
 ELF64=main_elf64 head_elf64 sections_elf64 symbols_elf64
 ELF32=main_elf32 head_elf32 sections_elf32 symbols_elf32
+FATELF=main_fat
+ARCH=main_ar
 
-SRC=$(MAIN) $(ELF64) $(ELF32)
+SRC=$(MAIN) $(ELF64) $(ELF32) $(FATELF) $(ARCH)
 OBJ=$(SRC:%=$(PATH_OBJ)%.o)
 DEP=$(OBJ:%.o=%.d)
 

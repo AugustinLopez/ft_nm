@@ -13,5 +13,11 @@ int elf32_main(void *ptr, size_t len, int endian, t_nmhandle *printer)
 	if(elf32_head(&elf) == -1
 	|| elf32_sections(&elf, printer) == -1)
 		return (-1);
+	if (printer->alive) {
+		handle_print(printer);
+		handle_reset(printer);
+	}
+	else
+		return (-1);
 	return (0);
 }

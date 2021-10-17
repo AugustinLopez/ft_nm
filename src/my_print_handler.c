@@ -86,9 +86,9 @@ static void ft_swap(t_nmlist **left, t_nmlist **right)
 {
 	uint8_t buffer[sizeof(t_nmlist *)];
 
-	memcpy(buffer, left, sizeof(*left));
-	memcpy(left, right, sizeof(*left));
-	memcpy(right, buffer, sizeof(*left));
+	ft_memcpy(buffer, left, sizeof(*left));
+	ft_memcpy(left, right, sizeof(*left));
+	ft_memcpy(right, buffer, sizeof(*left));
 }
 
 static size_t ft_part(t_nmlist **tab, size_t left, size_t right)
@@ -121,15 +121,19 @@ static void ft_qsort(t_nmlist **tab, size_t left, size_t right)
 	ft_qsort(tab, iter + 1, right);
 }
 
-void handle_print(t_nmhandle *handler, char *filename)
+void handle_print(t_nmhandle *handler)
 {
     t_nmlist *elem = handler->begin;
     t_nmlist **sorted;
     size_t i = 0;
     int j;
 
-    if (filename)
-        printf("\n%s:\n", filename);
+    if (handler->flag & FLAG_FATELF)
+        printf("\nMachine %hu:\n", handler->architecture);
+    else if (handler->flag & FLAG_ARCH)
+        printf("\n%s:\n", handler->objectname);
+    else if (handler->flag & FLAG_MULTIPLE_ARG)
+        printf("\n%s:\n", handler->filename);
     if ((sorted = malloc(handler->current_count * (sizeof(t_nmlist *)))) == NULL) {
         printf("Could not allocate memory to print\n");
         return ;
