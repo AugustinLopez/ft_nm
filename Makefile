@@ -12,22 +12,23 @@
 
 NAME=ft_nm
 COMPILER=gcc
-FLAGS=-g3 -O0 -fsanitize=address -Wall -Wextra -MMD -MP
+FLAGS=-g3 -Wall -Wextra -MMD -MP
 
-VPATH=src:src/elf64:src/elf32:src/fatelf:src/ar
+VPATH=src:src/elf64:src/elf32:src/fatelf:src/ar:src/mylib
 PATH_OBJ=.object/
 PATH_HDR=./inc/
 
 CC_O=$(COMPILER) $(FLAGS) -c -I$(PATH_HDR)
 CC_C=$(COMPILER) $(FLAGS) $(OBJ)
 
-MAIN=main load_argv elf_identifier my_endian my_print_handler
+MAIN=main load_argv elf_identifier my_endian my_handler my_printer
 ELF64=main_elf64 head_elf64 sections_elf64 symbols_elf64
 ELF32=main_elf32 head_elf32 sections_elf32 symbols_elf32
 FATELF=main_fat
 ARCH=main_ar
+MYLIB=ft_memcmp ft_memcpy ft_memset ft_strchr ft_strcmp ft_strlen ft_strncmp
 
-SRC=$(MAIN) $(ELF64) $(ELF32) $(FATELF) $(ARCH)
+SRC=$(MAIN) $(ELF64) $(ELF32) $(FATELF) $(ARCH) $(MYLIB)
 OBJ=$(SRC:%=$(PATH_OBJ)%.o)
 DEP=$(OBJ:%.o=%.d)
 

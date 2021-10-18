@@ -27,17 +27,26 @@ int main(int ac, char **av)
 {
 	int ret = 0;
 	int mem = 0;
+	int stopopt = 0;
 	t_nmhandle printer;
 
-	if (handle_constructor(&printer) == -1)
-		return (-1);
-	printer.flag |= (ac > 2) ? FLAG_MULTIPLE_ARG : 0;
-	if (ac == 1) {
+	ret = handle_constructor(&printer, ac, av);
+	if (ret <= 0)
+		return (ret);
+	if (ret == 1) {
 		printer.filename = "a.out";
 		mem = mainloop(&printer);
 	}
 	else {
 		for (int i = 1; i < ac; i++) {
+			if (stopopt == 0) {
+				if (ft_strcmp("--", av[i]) == 0) {
+					stopopt = 1;
+					continue ;
+				}
+				else if (av[i][0] == '-')
+					continue ;
+			}
 			printer.filename = av[i];
 			ret = mainloop(&printer);
 			mem = (mem == 0) ? -(ret == -1) : mem;

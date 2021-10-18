@@ -90,7 +90,7 @@ int archloop(uint8_t *head, size_t len, size_t *off, uint8_t *extended, int sext
 	ret = arloop(head + *off + 60, (size_t)size, printer);
 	printer->objectname = NULL;
 	*off += 60 + (size_t)size;
-	return(0);
+	return(ret);
 }
 
 int arch_main(void *ptr, size_t len, t_nmhandle *printer)
