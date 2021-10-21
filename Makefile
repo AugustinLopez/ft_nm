@@ -6,13 +6,13 @@
 #    By: aulopez <aulopez@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2021/10/21 13:48:22 by aulopez          ###   ########.fr        #
+#    Updated: 2021/10/21 14:44:01 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME=ft_nm
 COMPILER=gcc
-FLAGS=-g3 -Wall -Wextra -MMD -MP
+FLAGS=-g3 -Werror -Wall -Wextra -MMD -MP
 
 VPATH=src:src/elf64:src/elf32:src/fatelf:src/ar:src/mylib
 PATH_OBJ=.object/
