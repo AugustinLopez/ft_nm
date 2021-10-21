@@ -84,6 +84,8 @@ static int handle_option(char *arg, uint64_t *flag)
             *flag |= FLAG_UNDEFINED;
         else if (arg[i] == 'g')
             *flag |= FLAG_EXTERNAL;
+        else if (arg[i] == 'M')
+            *flag |= FLAG_INIT_FINI;
         else {
             err[8] = arg[i];
             write(STDERR_FILENO, err, 27);

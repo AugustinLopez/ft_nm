@@ -5,14 +5,15 @@
 # include <stddef.h>
 
 # define FT_NM_HELP_MSG \
-    "usage: ./ft_nm [-hAonvrpug] [Elf file]\n\n" \
+    "usage: ./ft_nm [-hAonvrpugM] [Elf file]\n\n" \
     "-h    \tPrint this help\n" \
     "-A/o  \tPrecede each symbol by the input file name\n" \
     "-n/v  \tSort by address value first, name second\n" \
     "-r    \tReverse sort\n" \
     "-p    \tDo not sort\n" \
     "-u    \tDisplay only undefined symbols\n" \
-    "-g    \tDisplay only external symbols\n"
+    "-g    \tDisplay only external symbols\n" \
+    "-M    \tUse modern symbol for .init_array and .fini_array\n"
 
 # define FLAG_MULTIPLE_ARG 0x1
 # define FLAG_FATELF 0x2
@@ -24,6 +25,7 @@
 //# define FLAG_ARMAP 0x80
 # define FLAG_UNDEFINED 0x100
 # define FLAG_EXTERNAL 0x200
+# define FLAG_INIT_FINI 0x400
 # define __42__
 
 # ifndef __42__

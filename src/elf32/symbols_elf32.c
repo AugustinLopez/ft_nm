@@ -2,12 +2,16 @@
 #include "ft_elf32.h"
 #include <unistd.h>
 
-static unsigned char elf32_letter_from_section_name(const char *name)
+static unsigned char elf32_letter_from_section_name(uint64_t flag, const char *name)
 {
 	unsigned char c = '?';
 
 	for (int i = 0; i < STT_COUNT; i++) {
 		if (!ft_strncmp(stt[i].name, name, ft_strlen(stt[i].name))) {
+			if ((flag & FLAG_INIT_FINI) && (!ft_strncmp(stt[i].name, ".init_array", ft_strlen(stt[i].name))
+			|| !ft_strncmp(stt[i].name, ".fini_array", ft_strlen(stt[i].name)))) {
+				break;
+			}
 			c = stt[i].letter;
 			break ;
 		}
@@ -71,7 +75,7 @@ int elf32_symbols(t_m32 *elf, const Elf32_Shdr *section, const Elf32_Sym *symtab
 			write(STDERR_FILENO, "Unexpected index\n", 17);
 			return (-1);
 		}
-		c = (c != '?') ? c : elf32_letter_from_section_name(elf->string_ptr + elf->section[symtab[i].st_shndx].sh_name);
+		c = (c != '?') ? c : elf32_letter_from_section_name(printer->flag, elf->string_ptr + elf->section[symtab[i].st_shndx].sh_name);
 		c = (c != '?') ? c : elf32_letter_from_section_info(&(elf->section[symtab[i].st_shndx])); 
 		if (c == '?')
 			continue ;
