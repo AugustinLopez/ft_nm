@@ -6,5 +6,5 @@ TEST=$(diff /tmp/their.txt /tmp/my.txt)
 if [[ "$TEST" == "" ]]; then
 	echo 'OK'
 else
-	printf "%s\n" $TEST
+	diff /tmp/their.txt /tmp/my.txt
 fi
