@@ -66,6 +66,10 @@ int elf64_symbols(t_m64 *elf, const Elf64_Shdr *section, const Elf64_Sym *symtab
 		if (ELF64_ST_TYPE(symtab[i].st_info) == STT_FILE
 		|| ELF64_ST_TYPE(symtab[i].st_info) == STT_SECTION)
 			continue ;
+		if (symtab[i].st_shndx >= section->sh_size / section->sh_entsize) {
+			write(STDERR_FILENO, "Unexpected index\n", 17);
+			return (-1);
+		}
 		c = elf64_letter_from_symbol(&symtab[i]);
 		c = (c != '?') ? c : elf64_letter_from_section_name(elf->string_ptr + elf->section[symtab[i].st_shndx].sh_name);
 		c = (c != '?') ? c : elf64_letter_from_section_info(&(elf->section[symtab[i].st_shndx])); 
@@ -73,7 +77,6 @@ int elf64_symbols(t_m64 *elf, const Elf64_Shdr *section, const Elf64_Sym *symtab
 			continue ;
 		if (ft_strchr("?uvwpi", c) == NULL && ELF64_ST_BIND(symtab[i].st_info) == STB_LOCAL)
 			c += 'a' - 'A';
-		//printf("%d %20s %s\n",elf->section[symtab[i].st_shndx].sh_flags, elf->string_ptr + elf->section[symtab[i].st_shndx].sh_name, symname + symtab[i].st_name);
 		if (handle_add_fof(printer, (uint64_t)symtab[i].st_value, c, symname + symtab[i].st_name) == -1)
 			return (-1);
 	}

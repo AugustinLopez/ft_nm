@@ -24,7 +24,8 @@ int elf32_sections(t_m32 *elf, t_nmhandle *printer)
 			write(STDERR_FILENO, "bad section offset\n", 20);
 			return (-1);
 		}
-		elf32_symbols(elf, &section[i], (Elf32_Sym *)(elf->ptr + osym), (char *)(elf->ptr + ostr), printer);
+		if (elf32_symbols(elf, &section[i], (Elf32_Sym *)(elf->ptr + osym), (char *)(elf->ptr + ostr), printer) == -1)
+			return (-1);
 	}
 	return (0);
 }
