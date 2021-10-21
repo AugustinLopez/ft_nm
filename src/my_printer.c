@@ -5,15 +5,22 @@
 
 static int ft_address(t_nmlist *left, t_nmlist *right)
 {
+	int ret;
+
     if (ft_strchr("Uwv", left->letter) != NULL && ft_strchr("Uwv", right->letter) == NULL)
         return (-1);
     else if (ft_strchr("Uwv", right->letter) != NULL && ft_strchr("Uwv", left->letter) == NULL)
         return (1);
     else if (left->addr > right->addr)
         return (1);
-    else if (left->addr < right->addr)
+    else if (left->addr < right->addr) {
         return (-1);
-    return (ft_strcmp(left->name, right->name));
+	}
+	ret = ft_strcmp(left->name, right->name);
+    if (ret != 0)
+        return (ret);
+	else
+	 	return (left->letter >= right->letter);
 }
 
 static int ft_name(t_nmlist *left, t_nmlist *right)
@@ -23,7 +30,16 @@ static int ft_name(t_nmlist *left, t_nmlist *right)
     ret = ft_strcmp(left->name, right->name);
     if (ret != 0)
         return (ret);
-    return (left->addr >= right->addr);
+    if (ft_strchr("Uwv", left->letter) != NULL && ft_strchr("Uwv", right->letter) == NULL)
+        return (-1);
+    else if (ft_strchr("Uwv", right->letter) != NULL && ft_strchr("Uwv", left->letter) == NULL)
+        return (1);
+    else if (left->addr > right->addr)
+        return (1);
+    else if (left->addr < right->addr)
+        return (-1);
+	else
+ 		return (left->letter >= right->letter);
 }
 
 static int ft_raddress(t_nmlist *left, t_nmlist *right)
@@ -124,7 +140,7 @@ void secondary_print(t_nmhandle *handler, t_nmlist *elem) {
     write(STDOUT_FILENO, "\n", 1);
 }
 
-static void mergesort(t_nmlist **tab, size_t len, int (*cmp)(t_nmlist *, t_nmlist *))
+static int mergesort(t_nmlist **tab, size_t len, int (*cmp)(t_nmlist *, t_nmlist *))
 {
 	t_nmlist **left;
 	t_nmlist **right;
@@ -132,14 +148,17 @@ static void mergesort(t_nmlist **tab, size_t len, int (*cmp)(t_nmlist *, t_nmlis
 	size_t j;
 
 	if (len <= 1)
-		return ;
+		return (0);
 	left = malloc(len * sizeof(t_nmlist *));
 	if (!left)
-		return ;
+		return (-1);
 	ft_memcpy(left, tab, len * sizeof(t_nmlist *));
 	right = left + len / 2;
-	mergesort(left, len / 2, cmp);
-	mergesort(right, len - len / 2, cmp);
+	if (mergesort(left, len / 2, cmp) == -1
+	|| mergesort(right, len - len / 2, cmp) == -1) {
+		free(left);
+		return (-1);
+	}
 	i = 0;
 	j = 0;
 	while (i < len / 2 && j < len - len / 2) {
@@ -157,6 +176,7 @@ static void mergesort(t_nmlist **tab, size_t len, int (*cmp)(t_nmlist *, t_nmlis
 	for (;j < len - len / 2;j++)
 		tab[i + j] = right[j];
 	free(left);
+	return (0);
 }
 
 
@@ -165,6 +185,7 @@ void handle_print(t_nmhandle *handler)
 {
     t_nmlist *elem = handler->begin;
     t_nmlist **sorted;
+	int ret;
 
     initial_print(handler);
 	if (handler->current_count == 0) {
@@ -181,11 +202,15 @@ void handle_print(t_nmhandle *handler)
     }
     if ((handler->flag & FLAG_NOSORT) == 0) {
         if (handler->flag & FLAG_NUMSORT)
-            mergesort(sorted, handler->current_count, (handler->flag & FLAG_RSORT) ? ft_raddress : ft_address);
+            ret = mergesort(sorted, handler->current_count, (handler->flag & FLAG_RSORT) ? ft_raddress : ft_address);
         else
-            mergesort(sorted, handler->current_count, (handler->flag & FLAG_RSORT) ? ft_rname : ft_name);
+            ret = mergesort(sorted, handler->current_count, (handler->flag & FLAG_RSORT) ? ft_rname : ft_name);
     }
-    for (size_t i = 0; i < handler->current_count; i++)
-        secondary_print(handler, sorted[i]);
+	if (ret == -1)
+		write(STDERR_FILENO, "Could not allocate memory to sort\n", 34);
+	else {
+   		for (size_t i = 0; i < handler->current_count; i++)
+    	    secondary_print(handler, sorted[i]);
+	}
     free(sorted);
 }

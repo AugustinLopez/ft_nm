@@ -6,7 +6,7 @@
 #    By: aulopez <aulopez@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2021/10/21 13:22:25 by aulopez          ###   ########.fr        #
+#    Updated: 2021/10/21 13:48:22 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,8 +39,9 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	-@printf " ===> \e[32mCreated executable\e[0m: $(NAME)\n"
 	@$(CC_C) -o $(NAME)
-	-@printf " \n\n\e[33m\`export LC_ALL=C\`or \`export LC_ALL=POSIX\` to compare output with system nm\e[0m\n" 
-	-@printf " \e[33mTested on Ubuntu 18.04.5 LTS: behavior of .init_array and .fini_array have since changed\e[0m\n" 
+	-@printf "\n\n> \e[33m\`export LC_ALL=C\`or \`export LC_ALL=POSIX\` to compare output with system nm\e[0m\n" 
+	-@printf "> \e[33mBehavior of .init_array and .fini_array have been changed since version 18.04.5 LT on Ubuntu\e[0m\n" 
+	-@printf "> \e[33mThis ft_nm default sorting is alphabetic > address value > symbol letter\e[0m\n" 
 
 
 $(PATH_OBJ)%.o:%.c | $(PATH_OBJ)
