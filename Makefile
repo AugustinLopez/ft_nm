@@ -6,7 +6,7 @@
 #    By: aulopez <aulopez@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2021/10/04 21:28:31 by aulopez          ###   ########.fr        #
+#    Updated: 2021/10/21 13:22:25 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,9 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	-@printf " ===> \e[32mCreated executable\e[0m: $(NAME)\n"
 	@$(CC_C) -o $(NAME)
+	-@printf " \n\n\e[33m\`export LC_ALL=C\`or \`export LC_ALL=POSIX\` to compare output with system nm\e[0m\n" 
+	-@printf " \e[33mTested on Ubuntu 18.04.5 LTS: behavior of .init_array and .fini_array have since changed\e[0m\n" 
+
 
 $(PATH_OBJ)%.o:%.c | $(PATH_OBJ)
 	-@printf " > \e[33m$*.o\e[0m\n"

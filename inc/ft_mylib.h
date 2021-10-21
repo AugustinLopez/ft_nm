@@ -60,8 +60,8 @@ static const struct section_to_type stt[STT_COUNT] =
   {".debug", 'N'},		/* MSVC's .debug (non-standard debug syms) */
   {".drectve", 'I'},		/* MSVC's .drective section */
   {".edata", 'E'},		/* MSVC's .edata (export) section */
-  {".init_array", '?'},
-  {".fini_array", '?'},
+  {".init_array", 'T'},
+  {".fini_array", 'T'},
   //{".eh_frame", 'B'},
   {".fini", 'T'},		
   {".init", 'T'},	

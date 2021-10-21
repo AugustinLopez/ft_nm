@@ -36,45 +36,6 @@ static int ft_rname(t_nmlist *left, t_nmlist *right)
     return (ft_name(right, left));
 }
 
-static void ft_swap(t_nmlist **left, t_nmlist **right)
-{
-	uint8_t buffer[sizeof(t_nmlist *)];
-
-	ft_memcpy(buffer, left, sizeof(*left));
-	ft_memcpy(left, right, sizeof(*left));
-	ft_memcpy(right, buffer, sizeof(*left));
-}
-
-static size_t ft_part(t_nmlist **tab, size_t left, size_t right, int (*cmp)(t_nmlist *, t_nmlist *))
-{
-    t_nmlist **pivot = &tab[left];
-    size_t mleft = left;
-    size_t mright = right;
-
-    while (left < right) {
-        while (left < mright && cmp(tab[left], pivot[0]) <= 0)
-            left++;
-        while (right > mleft && cmp(tab[right], pivot[0]) > 0)
-            right--;
-        if (left < right)
-            ft_swap(&tab[left], &tab[right]);
-    }
-    ft_swap(pivot, &tab[right]);
-    return (right);
-}
-
-static void ft_qsort(t_nmlist **tab, size_t left, size_t right, int (*cmp)(t_nmlist *, t_nmlist *))
-{
-	size_t iter;
-
-	if (left >= right)
-		return;
-    iter = ft_part(tab, left, right, cmp);
-    if (iter > 0)
-	    ft_qsort(tab, left, iter - 1, cmp);
-	ft_qsort(tab, iter + 1, right, cmp);
-}
-
 void write_number(uint64_t number, char format)
 {
     uint8_t buff[30];
@@ -163,25 +124,66 @@ void secondary_print(t_nmhandle *handler, t_nmlist *elem) {
     write(STDOUT_FILENO, "\n", 1);
 }
 
+static void mergesort(t_nmlist **tab, size_t len, int (*cmp)(t_nmlist *, t_nmlist *))
+{
+	t_nmlist **left;
+	t_nmlist **right;
+	size_t i;
+	size_t j;
+
+	if (len <= 1)
+		return ;
+	left = malloc(len * sizeof(t_nmlist *));
+	if (!left)
+		return ;
+	ft_memcpy(left, tab, len * sizeof(t_nmlist *));
+	right = left + len / 2;
+	mergesort(left, len / 2, cmp);
+	mergesort(right, len - len / 2, cmp);
+	i = 0;
+	j = 0;
+	while (i < len / 2 && j < len - len / 2) {
+		if (cmp(left[i], right[j]) <= 0) {
+			tab[i + j] = left[i];
+			i++;
+		}
+		else {
+			tab[i + j] = right[j];
+			j++;
+		}
+	}
+	for (;i < len / 2;i++)
+		tab[i + j] = left[i];
+	for (;j < len - len / 2;j++)
+		tab[i + j] = right[j];
+	free(left);
+}
+
+
+
 void handle_print(t_nmhandle *handler)
 {
     t_nmlist *elem = handler->begin;
     t_nmlist **sorted;
 
-    if ((sorted = malloc(handler->current_count * (sizeof(t_nmlist *)))) == NULL) {
+    initial_print(handler);
+	if (handler->current_count == 0) {
+		write(STDERR_FILENO, "No symbols\n", 11);
+		return ;
+	}
+    if ((sorted = malloc(handler->current_count * sizeof(t_nmlist *))) == NULL) {
         write(STDERR_FILENO, "Could not allocate memory to print\n", 35);
         return ;
     }
-    initial_print(handler);
     for (size_t i = 0; i < handler->current_count; i++) {
         sorted[i] = elem;
         elem = elem->next;
     }
     if ((handler->flag & FLAG_NOSORT) == 0) {
         if (handler->flag & FLAG_NUMSORT)
-            ft_qsort(sorted, 0, handler->current_count - 1, (handler->flag & FLAG_RSORT) ? ft_raddress : ft_address);
+            mergesort(sorted, handler->current_count, (handler->flag & FLAG_RSORT) ? ft_raddress : ft_address);
         else
-            ft_qsort(sorted, 0, handler->current_count - 1, (handler->flag & FLAG_RSORT) ? ft_rname : ft_name);
+            mergesort(sorted, handler->current_count, (handler->flag & FLAG_RSORT) ? ft_rname : ft_name);
     }
     for (size_t i = 0; i < handler->current_count; i++)
         secondary_print(handler, sorted[i]);
