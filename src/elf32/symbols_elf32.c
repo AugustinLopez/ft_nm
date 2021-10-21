@@ -66,11 +66,11 @@ int elf32_symbols(t_m32 *elf, const Elf32_Shdr *section, const Elf32_Sym *symtab
 		if (ELF32_ST_TYPE(symtab[i].st_info) == STT_FILE
 		|| ELF32_ST_TYPE(symtab[i].st_info) == STT_SECTION)
 			continue ;
-		if (symtab[i].st_shndx >= section->sh_size / section->sh_entsize) {
+		c = elf32_letter_from_symbol(&symtab[i]);
+		if (c == '?' && symtab[i].st_shndx >= elf->e_shnum) {
 			write(STDERR_FILENO, "Unexpected index\n", 17);
 			return (-1);
 		}
-		c = elf32_letter_from_symbol(&symtab[i]);
 		c = (c != '?') ? c : elf32_letter_from_section_name(elf->string_ptr + elf->section[symtab[i].st_shndx].sh_name);
 		c = (c != '?') ? c : elf32_letter_from_section_info(&(elf->section[symtab[i].st_shndx])); 
 		if (c == '?')
